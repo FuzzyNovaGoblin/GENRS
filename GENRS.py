@@ -8,12 +8,12 @@ class Block:
     ch = 0
     key = ""
 
-    def __init__(self, aa, bb, cc, k):
+    def __init__(self, aa, bb, cc):
         pos = 0
         self.a = aa
         self.b = bb
         self.c = cc
-        self.key = k
+
 
     def Rot(self):
         hold = self.a
@@ -58,9 +58,9 @@ class Block:
         self.c += 255*self.ch
 
     def getMultBy(self):
-        if(Block.pos == len(self.key)):
+        if(Block.pos == len(Block.key)):
             Block.pos = 0
-        r = ord(self.key[Block.pos])
+        r = ord(Block.key[Block.pos])
         Block.pos += 1
         return r
 
@@ -75,12 +75,24 @@ class Block:
         self.b = self.b/self.getMultBy()
         self.c = self.c/self.getMultBy()
 
+class DBlock(Block):
+
+    def __init__(self, hhaa, aa, hhbb, bb, hhcc ,cc):
+        self.ah = hhaa
+        self.bh = hhbb
+        self.ch = hhcc
+        self.a = aa
+        self.b = bb
+        self.c = cc
+
 def encrypt(bytesarr):
     Block.pos = 0
     for block in bytesarr:
+        print("encryptcalled")
         block.Rot()
         block.mult()
         block.Geth()
+        print(bytesarr)
     return bytesarr
 
 
@@ -100,68 +112,101 @@ def decrypt(bytesarr):
 # filename = input("file name: ")
 
 key = "Pizza"
-
-
-
-bytes = []
-
-
-filename = "testfile"
-# filename = "new"
-# filename = "1.jpg"
-
-# f = open(filename, "rb")
-# try:
-#     byte = f.read(1)
-#     while byte != b'':
-#         # Do stuff with byte.
-#         # byte = int(f.read(1))
-#         # b = bin(int.from_bytes(byte, "big"))
-#         bytes.append(int.from_bytes(byte, "big"))
-#         byte = f.read(1)
-#
-# finally:
-#     f.close()
-
-
-f = open(filename, "rb")
-try:
-    byte = f.read(1)
-    while byte != b'':
-        # Do stuff with byte.
-        # byte = int(f.read(1))
-        # b = bin(int.from_bytes(byte, "big"))
-        bytes.append(int.from_bytes(byte, "big"))
-        byte = f.read(1)
-
-finally:
-    f.close()
-
-
-
-print(bytes)
-if(len(bytes)%3!=0):
-    bytes.append(0)
-if(len(bytes)%3!=0):
-    bytes.append(0)
-
-
+dve = "e"
 
 
 blocks = []
-pos = 0
-for i in range(int(len(bytes)/3)):
-    b = Block(bytes[pos], bytes[pos+1], bytes[pos+2], key)
-    blocks.append(b)
-    pos += 2
+bytes = []
+
+
+# filename = "testfile"
+filename = "new"
+# filename = "1.jpg"
+
+if dve == "e":
+    Block.key = key
+
+    f = open(filename, "rb")
+    try:
+        byte = f.read(1)
+        while byte != b'':
+            # Do stuff with byte.
+            # byte = int(f.read(1))
+            # b = bin(int.from_bytes(byte, "big"))
+            bytes.append(int.from_bytes(byte, "big"))
+            byte = f.read(1)
+
+    finally:
+        f.close()
 
 
 
+    if (len(bytes) % 3 != 0):
+        bytes.append(0)
+    if (len(bytes) % 3 != 0):
+        bytes.append(0)
 
-blocks = encrypt(blocks)
+    pos = 0
+    for i in range(int(len(bytes) / 3)):
+        b = Block(bytes[pos], bytes[pos + 1], bytes[pos + 2])
+        blocks.append(b)
+        pos += 2
 
-of = open("new", "w")
-for b in blocks:
-    of.write((str(b.ah)+" "+str(b.a)+" "+str(b.bh)+" "+str(b.b)+" "+str(b.ch)+" "+str(b.c)+" "))
+    blocks = encrypt(blocks)
 
-of.close()
+    of = open("new", "w")
+    for b in blocks:
+        print("print")
+        of.write(
+            (str(b.ah) + " " + str(b.a) + " " + str(b.bh) + " " + str(b.b) + " " + str(b.ch) + " " + str(b.c) + " "))
+
+    of.close()
+
+elif dve == "d":
+
+    f = open(filename, "r")
+    try:
+        byte = f.read(1)
+        while byte != '':
+
+            char = ''
+            while byte != ' ':
+                char += byte
+                byte = f.read(1)
+            byte = f.read(1)
+
+            char2 = ''
+            while byte != ' ':
+                char2 += byte
+                byte = f.read(1)
+
+            char3 = ''
+            while byte != ' ':
+                char3 += byte
+                byte = f.read(1)
+            byte = f.read(1)
+
+            char4 = ''
+            while byte != ' ':
+                char4 += byte
+                byte = f.read(1)
+            byte = f.read(1)
+
+            char5 = ''
+            while byte != ' ':
+                char5 += byte
+                byte = f.read(1)
+            byte = f.read(1)
+
+            char6 = ''
+            while byte != ' ':
+                char6 += byte
+                byte = f.read(1)
+            byte = f.read(1)
+
+
+            byte = f.read(1)
+
+
+    finally:
+        f.close()
