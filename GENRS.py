@@ -1,3 +1,4 @@
+
 class Block:
     a = 0
     b = 0
@@ -6,12 +7,13 @@ class Block:
     bh = 0
     ch = 0
     key = ""
-    pos = 0
-    def __init__(self, aa, bb, cc):
 
+    def __init__(self, aa, bb, cc, k):
+        pos = 0
         self.a = aa
         self.b = bb
         self.c = cc
+        self.key = k
 
     def Rot(self):
         hold = self.a
@@ -56,9 +58,11 @@ class Block:
         self.c += 255*self.ch
 
     def getMultBy(self):
-        if(self.pos == len(self.key)):
-            pos = 0
-        return int(self.key[self.pos])
+        if(Block.pos == len(self.key)):
+            Block.pos = 0
+        r = ord(self.key[Block.pos])
+        Block.pos += 1
+        return r
 
 
     def mult(self):
@@ -71,12 +75,31 @@ class Block:
         self.b = self.b/self.getMultBy()
         self.c = self.c/self.getMultBy()
 
+def encrypt(bytesarr):
+    Block.pos = 0
+    for block in bytesarr:
+        block.Rot()
+        block.mult()
+        block.Geth()
+    return bytesarr
+
+
+def decrypt(bytesarr):
+    Block.pos = 0
+    for block in bytesarr:
+        block.putH()
+        block.demult()
+        block.deRot()
+    return bytesarr
+
+
 
 # b = (int.from_bytes(b'\xff', "big"))
 # print(b)
 # print(b.to_bytes(2,"big"))
 # filename = input("file name: ")
 
+key = "Pizza"
 
 
 
@@ -86,6 +109,20 @@ bytes = []
 filename = "testfile"
 # filename = "new"
 # filename = "1.jpg"
+
+# f = open(filename, "rb")
+# try:
+#     byte = f.read(1)
+#     while byte != b'':
+#         # Do stuff with byte.
+#         # byte = int(f.read(1))
+#         # b = bin(int.from_bytes(byte, "big"))
+#         bytes.append(int.from_bytes(byte, "big"))
+#         byte = f.read(1)
+#
+# finally:
+#     f.close()
+
 
 f = open(filename, "rb")
 try:
@@ -100,6 +137,8 @@ try:
 finally:
     f.close()
 
+
+
 print(bytes)
 if(len(bytes)%3!=0):
     bytes.append(0)
@@ -112,15 +151,17 @@ if(len(bytes)%3!=0):
 blocks = []
 pos = 0
 for i in range(int(len(bytes)/3)):
-    b = Block(bytes[pos], bytes[pos+1], bytes[pos+2])
+    b = Block(bytes[pos], bytes[pos+1], bytes[pos+2], key)
     blocks.append(b)
     pos += 2
 
-print(blocks[0].a)
 
 
-# of = open("new", "wb")
-# for b in bytes:
-#     of.write(b.to_bytes(1,"big"))
-#
-# of.close()
+
+blocks = encrypt(blocks)
+
+of = open("new", "w")
+for b in blocks:
+    of.write((str(b.ah)+" "+str(b.a)+" "+str(b.bh)+" "+str(b.b)+" "+str(b.ch)+" "+str(b.c)+" "))
+
+of.close()
