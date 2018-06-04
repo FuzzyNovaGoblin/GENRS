@@ -78,30 +78,31 @@ class Block:
 class DBlock(Block):
 
     def __init__(self, hhaa, aa, hhbb, bb, hhcc ,cc):
-        self.ah = hhaa
-        self.bh = hhbb
-        self.ch = hhcc
-        self.a = aa
-        self.b = bb
-        self.c = cc
+        # print(hhaa+" "+ aa+" "+ hhbb+" "+ bb+" "+ hhcc +" "+cc)
+        self.ah = int(hhaa)
+        self.bh = int(hhbb)
+        self.ch = int(hhcc)
+        self.a = int(aa)
+        self.b = int(bb)
+        self.c = int(cc)
 
 def encrypt(bytesarr):
     Block.pos = 0
     for block in bytesarr:
-        print("encryptcalled")
-        block.Rot()
+        # print("encryptcalled")
         block.mult()
+        # block.Rot()
         block.Geth()
-        print(bytesarr)
+        # print(bytesarr)
     return bytesarr
 
 
 def decrypt(bytesarr):
     Block.pos = 0
-    for block in bytesarr:
-        block.putH()
-        block.demult()
-        block.deRot()
+    for dblock in bytesarr:
+        dblock.Puth()
+        # dblock.deRot()
+        dblock.demult()
     return bytesarr
 
 
@@ -111,9 +112,9 @@ def decrypt(bytesarr):
 # print(b.to_bytes(2,"big"))
 # filename = input("file name: ")
 
-key = "Pizza"
-dve = "e"
-
+key = "a"
+dve = "d"
+# dve = "e"
 
 blocks = []
 bytes = []
@@ -142,27 +143,30 @@ if dve == "e":
 
 
     if (len(bytes) % 3 != 0):
-        bytes.append(0)
+        bytes.append(32)
     if (len(bytes) % 3 != 0):
-        bytes.append(0)
+        bytes.append(32)
+
+    # print(bytes)
 
     pos = 0
     for i in range(int(len(bytes) / 3)):
         b = Block(bytes[pos], bytes[pos + 1], bytes[pos + 2])
         blocks.append(b)
-        pos += 2
+        
+        pos += 3
 
     blocks = encrypt(blocks)
 
     of = open("new", "w")
     for b in blocks:
-        print("print")
         of.write(
             (str(b.ah) + " " + str(b.a) + " " + str(b.bh) + " " + str(b.b) + " " + str(b.ch) + " " + str(b.c) + " "))
 
     of.close()
 
 elif dve == "d":
+    Block.key = key
 
     f = open(filename, "r")
     try:
@@ -179,6 +183,7 @@ elif dve == "d":
             while byte != ' ':
                 char2 += byte
                 byte = f.read(1)
+            byte = f.read(1)
 
             char3 = ''
             while byte != ' ':
@@ -204,9 +209,20 @@ elif dve == "d":
                 byte = f.read(1)
             byte = f.read(1)
 
-
-            byte = f.read(1)
+            b = DBlock(char, char2, char3, char4, char5, char6)
+            blocks.append(b)
 
 
     finally:
         f.close()
+
+
+    blocks = decrypt(blocks)
+
+    of = open("new", "wb")
+    for b in blocks:
+        of.write (int.to_bytes(int(b.a), 1, "big"))
+        of.write (int.to_bytes(int(b.b), 1, "big"))
+        of.write (int.to_bytes(int(b.c), 1, "big"))
+
+    of.close()
