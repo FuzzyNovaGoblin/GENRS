@@ -87,21 +87,23 @@ class DBlock(Block):
         self.c = int(cc)
 
 def encrypt(bytesarr):
+    print("encrypting")
     Block.pos = 0
     for block in bytesarr:
         # print("encryptcalled")
         block.mult()
-        # block.Rot()
+        block.Rot()
         block.Geth()
         # print(bytesarr)
     return bytesarr
 
 
 def decrypt(bytesarr):
+    print("decrypting")
     Block.pos = 0
     for dblock in bytesarr:
         dblock.Puth()
-        # dblock.deRot()
+        dblock.deRot()
         dblock.demult()
     return bytesarr
 
@@ -112,117 +114,120 @@ def decrypt(bytesarr):
 # print(b.to_bytes(2,"big"))
 # filename = input("file name: ")
 
-key = "a"
-dve = "d"
+# key = "a"
+# dve = "d"
 # dve = "e"
 
-blocks = []
-bytes = []
+def runprogram(filename, key, dve):
 
+    print("starting run")
+    print(filename)
+    print(dve)
 
-# filename = "testfile"
-filename = "new"
-# filename = "1.jpg"
+    blocks = []
+    bytes = []
 
-if dve == "e":
-    Block.key = key
+    #filename = "testfile"
+    # filename = "new"
+    # filename = "1.jpg"
 
-    f = open(filename, "rb")
-    try:
-        byte = f.read(1)
-        while byte != b'':
-            # Do stuff with byte.
-            # byte = int(f.read(1))
-            # b = bin(int.from_bytes(byte, "big"))
-            bytes.append(int.from_bytes(byte, "big"))
+    if dve == "e":
+        Block.key = key
+
+        f = open(filename, "rb")
+        try:
             byte = f.read(1)
-
-    finally:
-        f.close()
-
-
-
-    if (len(bytes) % 3 != 0):
-        bytes.append(32)
-    if (len(bytes) % 3 != 0):
-        bytes.append(32)
-
-    # print(bytes)
-
-    pos = 0
-    for i in range(int(len(bytes) / 3)):
-        b = Block(bytes[pos], bytes[pos + 1], bytes[pos + 2])
-        blocks.append(b)
-        
-        pos += 3
-
-    blocks = encrypt(blocks)
-
-    of = open("new", "w")
-    for b in blocks:
-        of.write(
-            (str(b.ah) + " " + str(b.a) + " " + str(b.bh) + " " + str(b.b) + " " + str(b.ch) + " " + str(b.c) + " "))
-
-    of.close()
-
-elif dve == "d":
-    Block.key = key
-
-    f = open(filename, "r")
-    try:
-        byte = f.read(1)
-        while byte != '':
-
-            char = ''
-            while byte != ' ':
-                char += byte
+            while byte != b'':
+                # Do stuff with byte.
+                # byte = int(f.read(1))
+                # b = bin(int.from_bytes(byte, "big"))
+                bytes.append(int.from_bytes(byte, "big"))
                 byte = f.read(1)
-            byte = f.read(1)
 
-            char2 = ''
-            while byte != ' ':
-                char2 += byte
-                byte = f.read(1)
-            byte = f.read(1)
+        finally:
+            f.close()
 
-            char3 = ''
-            while byte != ' ':
-                char3 += byte
-                byte = f.read(1)
-            byte = f.read(1)
+        if (len(bytes) % 3 != 0):
+            bytes.append(int.from_bytes(b'', "big"))
+        if (len(bytes) % 3 != 0):
+            bytes.append(int.from_bytes(b'', "big"))
 
-            char4 = ''
-            while byte != ' ':
-                char4 += byte
-                byte = f.read(1)
-            byte = f.read(1)
+        # print(bytes)
 
-            char5 = ''
-            while byte != ' ':
-                char5 += byte
-                byte = f.read(1)
-            byte = f.read(1)
-
-            char6 = ''
-            while byte != ' ':
-                char6 += byte
-                byte = f.read(1)
-            byte = f.read(1)
-
-            b = DBlock(char, char2, char3, char4, char5, char6)
+        pos = 0
+        for i in range(int(len(bytes) / 3)):
+            b = Block(bytes[pos], bytes[pos + 1], bytes[pos + 2])
             blocks.append(b)
 
+            pos += 3
 
-    finally:
-        f.close()
+        blocks = encrypt(blocks)
+
+        of = open(filename, "w")
+        for b in blocks:
+            of.write(
+                (str(b.ah) + " " + str(b.a) + " " + str(b.bh) + " " + str(b.b) + " " + str(b.ch) + " " + str(
+                    b.c) + " "))
+
+        of.close()
+
+    elif dve == "d":
+        Block.key = key
+
+        f = open(filename, "r")
+        try:
+            byte = f.read(1)
+            while byte != '':
+
+                char = ''
+                while byte != ' ':
+                    char += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                char2 = ''
+                while byte != ' ':
+                    char2 += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                char3 = ''
+                while byte != ' ':
+                    char3 += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                char4 = ''
+                while byte != ' ':
+                    char4 += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                char5 = ''
+                while byte != ' ':
+                    char5 += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                char6 = ''
+                while byte != ' ':
+                    char6 += byte
+                    byte = f.read(1)
+                byte = f.read(1)
+
+                b = DBlock(char, char2, char3, char4, char5, char6)
+                blocks.append(b)
 
 
-    blocks = decrypt(blocks)
+        finally:
+            f.close()
 
-    of = open("new", "wb")
-    for b in blocks:
-        of.write (int.to_bytes(int(b.a), 1, "big"))
-        of.write (int.to_bytes(int(b.b), 1, "big"))
-        of.write (int.to_bytes(int(b.c), 1, "big"))
+        blocks = decrypt(blocks)
 
-    of.close()
+        of = open(filename, "wb")
+        for b in blocks:
+            of.write(int.to_bytes(int(b.a), 1, "big"))
+            if(int.to_bytes(int(b.b), 1, "big") != int.to_bytes(0,1,"big")): of.write(int.to_bytes(int(b.b), 1, "big"))
+            if(int.to_bytes(int(b.c), 1, "big") != int.to_bytes(0,1,"big")): of.write(int.to_bytes(int(b.c), 1, "big"))
+
+        of.close()
